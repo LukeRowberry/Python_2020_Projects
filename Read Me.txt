@@ -2,3 +2,7 @@ Luke Rowberry 9/9/2020
 
 -This is my 2020-2021 Python project folder
 adding stuff in git
+gust testing
+
+
+I think its working
