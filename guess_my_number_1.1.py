@@ -1,6 +1,6 @@
 #Luke Rowberry
 #10/1/2020
-#Guess My Number 1.0
+#Guess My Number 1.1
 
 import random
 
@@ -11,8 +11,8 @@ print("\tWelcome to 'Guess My Number'!")
 print("\nI'm thinking of  number between 1 and 10.")
 print("Try to guess it in 3 attempts.\n")
 
-
-guess = int(input("Pick a number between 1 and 10. ")) #1
+#1
+guess = int(input("Pick a number between 1 and 10. ")) 
 
 if guess == theNumber:
     print("Winner!")
@@ -22,8 +22,9 @@ elif guess > theNumber:
 else:
     print("Guess higher!")
 
+#2
 if win == False:
-        guess = int(input("Pick a number between 1 and 10. ")) #2
+        guess = int(input("Pick a number between 1 and 10. ")) 
 
         if (guess == theNumber) and (not win):
             print("Winner!")
@@ -33,8 +34,9 @@ if win == False:
         else:
             print("Guess higher!")
 
+#3
 if win == False:
-        guess = int(input("Pick a number between 1 and 10. ")) #3
+        guess = int(input("Pick a number between 1 and 10. ")) 
 
         if (guess == theNumber) and (not win):
             print("Winner!")

@@ -16,3 +16,10 @@
 #print(years_until_21)
 #print(graduation)
 #print(retirement)
+
+#answer = (1 + 5) >= (6 - 1)
+#print(type(answer))
+
+#if (age = 17):
+#    print("asd")
+
