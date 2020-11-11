@@ -56,6 +56,7 @@ plains, will you slosh your
 oxen through mud and
 water-filled ruts or will you
 plod through dust six inches
+
 deep?\n""")
     user_input = input("Press ENTER to Continue\n")
 
@@ -168,7 +169,7 @@ def shop(money,food,ammo,cloths,parts,ox):
               "Check out"]
     spent_on_items = [0.00,0.00,0.00,0.00,0.00,bill]
     print("Before leaving Independence you should buy Equipment")
-    print(str.format("you have {} in cash to make this trip")
+    print(str.format("you have {} in cash to make this trip"))
     print("remember you can buy supplys along the way so you")
     
 def play_game():
