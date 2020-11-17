@@ -174,10 +174,10 @@ def shop(money,food,ammo,cloths,parts,ox):            #starter items shop
     bill = 0
     inventory = []
     items = ["Oxen","Food","Ammunition",
-              "clothes","Wagon parts",
+              "Clothes","Wagon parts",
               "Check out"]
     spent_on_items = [0.00,0.00,0.00,0.00,0.00,bill]
-    print("Before leaving Independence you should buy Equipment")
+    print("\nBefore leaving Independence you should buy Equipment")
     print(str.format("you have {} in cash to make this trip",money))
     print("remember you can buy supplys along the way so you don't have to spend it all now")
     input("press ENTER to Continue")
@@ -185,8 +185,8 @@ def shop(money,food,ammo,cloths,parts,ox):            #starter items shop
     while True:
         
         spent_on_items[len(spent_on_items)-1] = bill
-        print("Welcome to JL's general store")
-        print("Here is a list of things you can buy")
+        print("\nWelcome to JL's general store")
+        print("\nHere is a list of things you can buy")
         for i in range(len(items)):
             print(str.format("{}.      {:20}      ${:.2f}",i+1,items[i],spent_on_items[i]))
         print(str.format("Total bill so far:       ${:.2f}",bill))
@@ -205,55 +205,71 @@ def shop(money,food,ammo,cloths,parts,ox):            #starter items shop
             bill += cost
             spent_on_items[0] = cost
         elif choice == 2:
-            bill -= spent_on_items[0]
+            bill -= spent_on_items[1]
             food = 0
-            spent_on_items[0] = 0.00
-            print("I recommend atleast 200 lbs of food. My price is 20 cents per lb.")
+            spent_on_items[1] = 0.00
+            print("I recommend atleast 200 lbs of food per person. My price is 20 cents per lb.")
             print(str.format("Total bill so far:       ${:.2f}",bill))
             answer = int(input("How many pounds of food?: "))
             cost = answer*0.20 
-            food = answer*2 #look at
+            food = answer
             bill += cost
-            spent_on_items[0] = cost
+            spent_on_items[1] = cost
         elif choice == 3:
-            pass
+            bill -= spent_on_items[2]
+            ammo = 0
+            spent_on_items[2] = 0.00
+            print("I sell boxes containing 20 bullets each. Eat set is $2.")
+            print(str.format("Total bill so far:       ${:.2f}",bill))
+            answer = int(input("How many boxes of ammo?: "))
+            cost = answer*2.00
+            ammo = answer
+            bill += cost
+            spent_on_items[2] = cost
         elif choice == 4:
-            pass
+            bill -= spent_on_items[3]
+            cloths = 0
+            spent_on_items[3] = 0.00
+            print("I recommend atleast 2 sets of clothing per person. Eat set is $10.")
+            print(str.format("Total bill so far:       ${:.2f}",bill))
+            answer = int(input("How many sets of clothes?: "))
+            cost = answer*10.00
+            cloths = answer
+            bill += cost
+            spent_on_items[3] = cost
         elif choice == 5:
-            print(""""its a good idea to have
-            some wagon parts on hand.""")
+            print("""\nIt's a good idea to have
+some wagon parts on hand.""")
 
             parts_bill = 0.00
-            parts = ["wagon wheel", "wagon axle", "wagon tongue"]
+            parts = ["wagon wheel", "wagon axle", "wagon tongue","checkout"]
             parts_cost = [10.00,20.00,50.00,parts_bill]
             while True:
                 parts_cost[len(parts_cost)-1] = parts_bill
-                print("Here is a list of the parts you can buy:")
+                print("\nHere is a list of the parts you can buy:")
                 for i in range(len(parts)):
                     print(str.format("{}.      {:20}      ${:.2f}",i+1,parts[i],parts_cost[i]))
-
-
-            print(str.format("Total funds available:      ${:.2f}",money-bill))
-            item = int("what item to buy?")
-            if item ==1:
-                answer = int(input("how many wagon wheels do you want?"))
-                for i in range(answer):
-                    inventory.append("wagon wheel")
-                parts_bill += parts_cost[0]*answer
-            if item ==2:
-                answer = int(input("how many wagon axles do you want?")) #finish setting up parts
-                for i in range(answer):
-                    inventory.append("wagon axel")
-                parts_bill += parts_cost[1]*answer
-            if item ==3:
-                answer = int(input("how many wagon wheels do you want?"))
-                for i in range(answer):
-                    inventory.append("wagon wheel")
-                parts_bill += parts_cost[0]*answer
-            elif item == 4:
-                bill += parts_bill
-                spent_on_items[4] = parts_bill
-            break
+                print(str.format("Total funds available:      ${:.2f}",(money-bill)-parts_bill))
+                item = int(input("what item to buy?"))
+                if item ==1:
+                    answer = int(input("how many wagon wheels do you want?"))
+                    for i in range(answer):
+                        inventory.append("wagon wheel")
+                        parts_bill += parts_cost[0]*answer
+                if item ==2:
+                    answer = int(input("how many wagon axles do you want?")) 
+                    for i in range(answer):
+                        inventory.append("wagon axel")
+                        parts_bill += parts_cost[1]*answer
+                if item ==3:
+                    answer = int(input("how many wagon tongues do you want?"))
+                    for i in range(answer):
+                        inventory.append("wagon tongue")
+                        parts_bill += parts_cost[2]*answer
+                elif item == 4:
+                    bill += parts_bill
+                    spent_on_items[4] = parts_bill
+                    break
                     
                 
         
