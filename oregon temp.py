@@ -1,5 +1,125 @@
 #Oregon Trail Game
+#Luke Rowberry and Jordan Jackson
+import datetime
+import random
 
+START_DATE = datetime.datetime(1848,3,1)
+current_date = START_DATE
+hp = 100
+ox_hp = 100
+total_miles = 2000
+miles_traveled  = 0
+food = 1000 #all below is temporary
+rations = "full"
+health_condition = "good"
+weather = "cold"
+pace = "normal"
+ox = 4
+
+def turn(hp,current_date,food,miles_traveled,total_miles):
+    weather = random.choice(["hot","good","fair","poor","windy","rain","blizzard"])
+    if hp >= 80:
+        health_condition = "good"
+    elif hp < 80 and hp >= 50:
+        health_condition = "fair"
+    else:
+        health_condition = "poor"
+
+    if rations == "full":
+        rations_mod = 2
+    elif rations == "half":
+        rations_mod = 1
+    else:
+        rations_mod = .5
+
+    problem = random.choice(["lost","snake bite","sick","ox died",
+                             "none","none","none","none","none",
+                             "none","none","none","none","none"])
+
+    if problem == "lost":
+        lost = random.randint(1,7)
+        print("One of your family members got lost for",lost,"days")
+        current_date += datetime.timedelta(days = lost)
+        food -= (len(family_list)+1)*ration_mod * lost
+
+    if problem == "snake bite":
+        hp -= 50
+
+    if problem == "sick":
+        hp -= 20
+
+    if problem == "ox died":
+        ox -= 1
+        food += 50
+
+    print(str.format("""
+   .....                                        ..'..                              ..',,,'..        
+..',;;;,,'...  ...                       ..'''',,;;;;,..                       ..',;;;;;;;;,,,'..   
+,;;,;;;;;,;;;,,,;,,...               ..',;;;;;,,;;;;;;;;,'..     ..''....',,'',,;;;;;;;;;;,;;;;;,'..
+;;;;;;;;;;;;;;;;;;;;;,,....'..   ..',;;;;;;;;;;;;;;;;;;;;;;,'..',;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;,,',,;,,;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+''''''''''''''',,,''''.........'''''',,,''''''''''''',,;;;;;,,,,,,,,,,,,;;;;;;;;;;;;,,,''...'',,,;;;
+                                                      ........        ...............            ...
+ +-----------------------------+                                                                    
+ |Date:{:_>24}|                 
+ |Weather:{:_>21}|           ..'''''''''''..                         ..''''''.        
+ |Health:{:_>22}|          ,:ccccllllllllc::::,...  ......  ..,::::::clclllcc,.      
+ |Miles Travled:{:_>15}|         .cc'.;cccclccccccccclc'.;cllllc;.'ccccccccccccclcl;.      
+ |Miles To Go:{:_>17}|          .;c, .,:clcclclcclcclc'.clcccclc.'cccccccccccclll:.       
+ |Food:{:_>24}|           .cc.  .';cccclcclcclc'.clcccclc.'cccccccccccccc:.        
+ +-----------------------------+            ,:;.   'ccccccclcclc'.clcccclc.'cccccccccccccc'         
+                 ..                         .;c;.   ,ccclccccllc'.clcccllc.'cccccclccllcc,          
+          .,,. .'::.  ....                   .:c.   .clcccccclcc'.cccccclc.'cccccccccccc'           
+           .,:::cl,..',';c;:;;;;:;;;'.        ',.   .:cccccccccc..:cccccc:.'ccccccccccc:.           
+         .';clcccl,';;::ccccccccccccc:.       ....  ......,,,,'.  .............',,,,..','.          
+          ...';:;,,;cccllcclcclccccccc........'.''.',...',.,;',,. .,','',,,  .,'';,','.''.          
+                .;:clcclcccclllccccc:,.      ...',... .,'. ', .';. ..,',,.. .;. .,. .,,.            
+                 .'clcccc::;'.,:lclc.         ..''    ';...;;...;'   ''''   ,;..';,..';.            
+                  .cc,:c;..  .,cc,:c.                 .,'. ', .',.          .;. .,. .,,.            
+                .':c,..;l'   .';:;:c.                  .',',;','.            .,,';,',.              
+'..''.''''.'''.',:c:,'';:,''''',::::,'''''...'''''''''''',;;;;,''''''''''..'''';;;;;,'''.''''''''''.
+;;;;;;;;;;;;;;,;;:::;;;::;,,;;;;::;;;;;;;;;;;;;;;;;;;;;;;;;;;,;;;;;;;;;;;;;;;;;;,;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;,;::::;;;:;;;;;;;:::;;;;;;;;;;;;;;;;;;;;;;;;;,;;,;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;,
+;;;;;;;;;;;;;;;;;:::;;;::;;;;;;;::;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;,;;;;;;;;;;;;;;;;;
+""",current_date,weather,hp,miles_traveled,total_miles,food))
+    
+        
+    
+    print("What would you like to do?")
+    while True:
+        options = ["Continue on Trail",
+               "Check Supplies",
+               "Change Pace",
+               "Change Rations",
+               "Stop and Rest"]
+        x = menu(options)
+        if x == 1:
+            miles_traveled = travel(pace,weather,health_condition) #doesnt exist yet
+            food -= (len(family_list)+1)*ration_mod
+            current_date += date.time.timedelta(days=1)
+            total_miles -= miles_traveled
+            break
+
+        elif x == 2:
+            check_supplys()
+        elif x == 3:
+            Pace() 
+        elif x == 4:
+            rations() 
+        elif x == 5:
+            hp,days = rest()
+            food -= (len(family_list)+1)*rations_mod*days
+            current_date += datetime.timedelta(days=rested)
+            break
+
+    if hp <= 0:
+        die = random.choice(family_list)
+        family_list.remove(die)
+        hp = 100
+
+
+    
+    
 
 design = """
                                   ___
@@ -294,15 +414,56 @@ def Pace():
             pace = "fast"
         return pace
 
-def travel():
-    pass
-def rations():
-    pass
+def travel(pace,weather,health_condition):
+    import random
+    mph = 0
+    weather_mod = 0
+    hours = 0
+    if pace == "fast":
+        mph = 4
+    elif pace == "slow":
+        mph = 1
+    else:
+        mph = 2
+    if health_condition == "poor":
+        hours = 2
+    elif health_condition == "fair":
+        hours = 4
+    else:
+        hours = 8
+    if weather == "blizzard":
+        weather_mod = 0
+    elif weather == "hot":
+        weather_mod = .5
+    elif weather == "rain":
+        weather_mod = .25
+    else:
+        weather_mod = 1
+    miles = hours * mph * weather_mod
+    random_mod = random.randint(0,5)
+    return miles - random_mod
+
+
+
+def Rations():
+    print ("Your current rations are", rations)
+    while True:
+        options = ["full","half","quarter"]
+        x = menu(options)
+        if x == 1:
+            return "full"
+        elif x == 2:
+            return "half"
+        elif x == 3:
+            return "quarter"
+        else:
+            print("Not an option")
+        
 
 def check_supplies():
     pass
     
-        
+     
 
                            
                              
@@ -322,9 +483,19 @@ def play_game():     #Playing the game
     parts =[]
     ox = 0
     money,food,ammo,cloths,parts,ox = shop(money,food,ammo,cloths,parts,ox)
+    miles = travel(pace,weather,health_condition)
+    print(miles)
+    rations = Rations()
+    print(rations)
+    #while len(family) > 0 and total_miles > 0:
+        #turn(hp,food,total_miles,family)
+        #hp,food,total_miles
+        #hp,current_date,food,miles_traveled,total_miles,
 
-    pace = Pace()
-    print(pace)
+    #if total_miles <= 0:
+        #print("Congrats, you made it to Oregon!")
+    #else:
+        #print("You and your family have died on the trail!")
 
     
 
