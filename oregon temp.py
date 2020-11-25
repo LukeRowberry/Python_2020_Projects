@@ -11,12 +11,13 @@ ox_hp = 100
 total_miles = 2000
 miles_traveled  = 0
 
-food = 1000 #all below is temporary
+pace = "normal"
 rations = "full"
+food = 1000 #all below is temporary
+
 health_condition = "good"
 weather = "cold"
-pace = "normal"
-ox = 4
+
 
 def turn(hp,current_date,food,miles_traveled,total_miles):
     weather = random.choice(["hot","good","fair","poor","windy","rain","blizzard"])
@@ -42,7 +43,7 @@ def turn(hp,current_date,food,miles_traveled,total_miles):
         lost = random.randint(1,7)
         print("One of your family members got lost for",lost,"days")
         current_date += datetime.timedelta(days = lost)
-        food -= (len(family_list)+1)*ration_mod * lost
+        food -= (len(family)+1)*ration_mod * lost
 
     if problem == "snake bite":
         hp -= 50
@@ -97,7 +98,7 @@ def turn(hp,current_date,food,miles_traveled,total_miles):
         x = menu(options)
         if x == 1:
             miles_traveled = travel(pace,weather,health_condition) #doesnt exist yet
-            food -= (len(family_list)+1)*ration_mod
+            food -= (len(family)+1)*ration_mod
             current_date += date.time.timedelta(days=1)
             total_miles -= miles_traveled
             break
@@ -107,16 +108,16 @@ def turn(hp,current_date,food,miles_traveled,total_miles):
         elif x == 3:
             Pace() 
         elif x == 4:
-            rations() 
+            Rations() 
         elif x == 5:
             hp,days = rest()
-            food -= (len(family_list)+1)*rations_mod*days
+            food -= (len(family)+1)*rations_mod*days
             current_date += datetime.timedelta(days=rested)
             break
 
     if hp <= 0:
-        die = random.choice(family_list)
-        family_list.remove(die)
+        die = random.choice(family)
+        family.remove(die)
         hp = 100
 
 
@@ -283,14 +284,14 @@ def getnum(question,low,high):
     
 
 def naming_players():
-    wagon_leader =get_name("What is your name?")
+    wagon_leader = get_name("What is your name?")
     family_list = []
-    num = getnum("How many members are in your family?",2,7)
+    num = getnum("How many members are in your family?",2,5)
     for i in range(num):
         name = get_name("Whats your family members name?")
-        family_list.append
+        family_list.append(name)
     return wagon_leader,family_list
-        
+    
 
 def shop(money,food,ammo,cloths,parts,ox):            #starter items shop
     bill = 0
@@ -405,6 +406,7 @@ def hunt():
     pass
 
 def Pace():
+    print("\nYour current pace is normal")
     while True:
         options = ["Slow","Normal","Fast"]
         x = menu(options)
@@ -414,6 +416,8 @@ def Pace():
             pace = "normal"
         elif x == 3:
             pace = "fast"
+        else:
+            print("Not an option")
         return pace
 
 def travel(pace,weather,health_condition):
@@ -448,7 +452,7 @@ def travel(pace,weather,health_condition):
 
 
 def Rations():
-    print ("Your current rations are", rations)
+    print("\nYour current rations are", rations)
     while True:
         options = ["full","half","quarter"]
         x = menu(options)
@@ -478,7 +482,7 @@ def play_game():     #Playing the game
     money,prof = char_setup()
     leader,family = naming_players()
 
-   
+    
     food = 0
     ammo = 0
     cloths = 0
@@ -486,11 +490,14 @@ def play_game():     #Playing the game
     ox = 0
     money,food,ammo,cloths,parts,ox = shop(money,food,ammo,cloths,parts,ox)
 
+    pace = Pace()
+    print("pace:",pace)
+    
     miles = travel(pace,weather,health_condition)
-    print(miles)
+    print("miles:",miles)
 
     rations = Rations()
-    print(rations)
+    print("rations:",rations)
 
     while len(family) > 0 and total_miles > 0:
         turn(hp,current_date,food,miles_traveled,total_miles)
