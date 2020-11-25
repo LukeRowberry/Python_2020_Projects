@@ -1,5 +1,6 @@
 #Oregon Trail Game
 #Luke Rowberry and Jordan Jackson
+
 import datetime
 import random
 
@@ -9,6 +10,7 @@ hp = 100
 ox_hp = 100
 total_miles = 2000
 miles_traveled  = 0
+
 food = 1000 #all below is temporary
 rations = "full"
 health_condition = "good"
@@ -483,19 +485,21 @@ def play_game():     #Playing the game
     parts =[]
     ox = 0
     money,food,ammo,cloths,parts,ox = shop(money,food,ammo,cloths,parts,ox)
+
     miles = travel(pace,weather,health_condition)
     print(miles)
+
     rations = Rations()
     print(rations)
-    #while len(family) > 0 and total_miles > 0:
-        #turn(hp,food,total_miles,family)
-        #hp,food,total_miles
-        #hp,current_date,food,miles_traveled,total_miles,
 
-    #if total_miles <= 0:
-        #print("Congrats, you made it to Oregon!")
-    #else:
-        #print("You and your family have died on the trail!")
+    while len(family) > 0 and total_miles > 0:
+        turn(hp,current_date,food,miles_traveled,total_miles)
+
+    if total_miles <= 0:
+        print("Congrats, you made it to Oregon!")
+    else:
+        print("You and your family have died on the trail!")
+        
 
     
 
