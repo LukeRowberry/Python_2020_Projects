@@ -1,6 +1,6 @@
 A Test That You Can't Refuse #the name of the test with creator name
 On the run with a Mammal #question category
-Let's say you turn state's evidence and need to "get on the lamb." If you wait too long, what will happen? #question only 1 line
+Let's say you turn state's evidence and need to "get on the lamb." /If you wait too long, what will happen? #question only 1 line
 You'll end up on the sheep
 You''ll end up on the cow
 You''ll end up on the goat
