@@ -1,7 +1,4 @@
 [Errno 2] No such file or directory: 'assets/test_files/error_test.txt' 12/07/2020 08:32:35
 [Errno 2] No such file or directory: 'assets/test_files/error_test2.txt' 12/07/2020 08:32:43
 [Errno 2] No such file or directory: 'assets/test_files/error_test3.txt' 12/07/2020 08:32:49
-[Errno 2] No such file or directory: 'assets/test_files/luke rowberry mid-term' 12/09/2020 08:15:02
-[Errno 2] No such file or directory: 'assets/test_files/luke_rowberry_mid_term' 12/09/2020 08:15:39
-[Errno 2] No such file or directory: 'assets/test_files/luke_rowberry_mid_term' 12/09/2020 08:17:09
-[Errno 2] No such file or directory: 'assets/test_files/luke_rowberry_mid_term.txt' 12/09/2020 08:17:54
+

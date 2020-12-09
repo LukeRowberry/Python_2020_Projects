@@ -82,7 +82,7 @@ def welcome(title,name,test_time):
 
 def create_report_card(name,score,total_questions,test_time):
     """student report card"""
-    card = open("assets/scores/"+name+".txt","w")
+    card = open("assets/scores/"+name+".txt","w+")
     card.write("Student Name: "+name+"\n")
     card.write("Date Taken: "+test_time+"\n")
     card.write("Amount Correct: "+str(score)+"\n")
