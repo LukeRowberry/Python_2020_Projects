@@ -84,7 +84,7 @@ def create_report_card(name,score,total_questions,test_time):
     """student report card"""
     card = open("assets/scores/"+name+".txt","w")
     card.write("Student Name: "+name+"\n")
-    casrd.write("Date Taken: "+test_time+"\n")
+    card.write("Date Taken: "+test_time+"\n")
     card.write("Amount Correct: "+str(score)+"\n")
     percentage = score/total_questions*100
     card.write("Percentage Score: "+"%"+str(percentage)+"\n")
@@ -105,7 +105,7 @@ def create_report_card(name,score,total_questions,test_time):
 
 
 def main():
-    file = open_file("example_test.txt","r") #will need to change file name to match the test that your taking
+    file = open_file("luke_rowberry_mid_term.txt","r") #will need to change file name to match the test that your taking
     title = next_line(file)
     name,test_time = get_name()
     welcome(title,name,test_time)

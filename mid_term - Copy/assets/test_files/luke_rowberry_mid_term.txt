@@ -1,0 +1,161 @@
+Fantastic Mid-Term Test Extravaganza By Luke Rowberry
+--Functions--1--
+Which is the correct way to start a function?
+def function():
+function():
+start function:
+papaya
+1
+Each function must start with "def".
+--Data Types--2--
+The number "20.5" is what kind of data type?
+float
+string
+integer
+banana
+1
+Floats are like integers, but floats use decimal points.
+--Comments--3--
+What character do you use to comment out a line of code?
+#
+&
+<
+pineapple
+1
+The characters "&" and "<" don't comment out lines of code.
+--Printing--4--
+Which print statement displays "Hello World" when run?
+print("Hello World")
+Print(Hello World):
+display:Hello World
+grapefruit
+1
+Each print statement has a set of "()" and isnt followed by a ":".
+--Websites--5--
+Which URL leads to the Python website?
+python.org
+py.gov
+python.12
+pomegranate.com
+1
+".org" is mostly used for non-profit organizations such as Python.
+--Functions--6--
+What keyword is used to stop a function and return to its calling code?
+return
+pause
+end
+mango
+1
+Return is the only keyword here that Python recognizes.
+--Functions--7--
+How do I call a function?
+function()
+run function
+function(run)
+mandarin
+1
+You only need the function name with a set of "()" which contain any paramaters.
+--Lists--8--
+Which statement will update the second element in a list named "menu"?
+menu[1]= "fries"
+menu{2} = "fries"
+menu.append = "fries"
+kiwi
+1
+You use a set of [] to specify a certain element in a list.
+--Loops--9--
+Which statement will start a while loop that will loop forever?
+while True:
+while:
+start_loop:
+guava
+1
+"True" will force the loop to continue until it becomes "False"
+--Program Order--10--
+In which order will Python read your code?
+From top to bottom
+From bottom to top
+From left to right
+grapes
+1
+Python reads like a book.
+--Strings--11--
+Which statement do you use to convert an integer to a string?
+str()
+int_convert()
+str_switch[]
+jackfruit
+1
+You only need "str()" to convert an integer to a string.
+--Statements--12--
+How are "==" and "=" used in statements?
+"==" is used in logical expressions and "=" is used in assigning
+"==" is used in defining functions and "=" is used in loops
+"==" is used in strings  and "=" is used in prints
+clementine
+1
+This distinction is used to avoid confusion.
+--Statements--13--
+Which statement correctly assigns the value 12 to a variable?
+variable = 12
+variable[12]
+12 % variable
+cranberries
+1
+The variable name comes first followed by an "=".
+--Cost--14--
+How much does it cost to install Python?
+its free
+$19.99 per month
+one-time payment of $100
+cherries
+1
+It's an open source program that is free for anyone to use.
+--Creation--15--
+Who created the Python language?
+Guido Van Rossum
+Jeff Bezos
+Bill Gates
+Steve Jobs
+1
+He just did...
+--File Extensions--16--
+What file extension is usually given to Python code?
+.py
+.jpg
+.python
+.durian
+1
+".py" is short and a more simple version of Python.
+--Functions--17--
+Where is the best place to define your functions?
+Near the top of the source file
+Near the bottom after the main program
+Anywhere you want to put it
+kumquat
+1
+Functions are usually defined before the main program code is run.
+--Integers--18--
+Which value would be stored as an integer?
+24
+twenty-four
+4.5
+lemon
+1
+Integers aren't words and don't use decimal points.
+--Math--19--
+If I have 10 lemons and 2 limes in my basket, how many limes do I have?
+2
+10
+I don't want to do this
+Why are we doing this?
+1
+There are 2 limes in the basket.
+--Pasta--20--
+Do you like pasta?
+yes
+yes?
+maybe
+no
+1
+Pasta is delicious.
