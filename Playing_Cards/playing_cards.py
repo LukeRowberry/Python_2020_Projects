@@ -68,32 +68,65 @@ class Deck(Hand):
                         hand.clear()
                     self.deal()
 
-deck = Deck()
-deck.populate()
-deck.shuffle()
+class Pos_Card(Card):
+    def __init__(self,rank,suit):
+        super(Pos_Card, self).__init__(rank,suit)
+        self.faceup = True
 
-player1 = Hand()
-player2 = Hand()
-river = Hand()
-players = [player1,player2]
-for i in range(2):
-    deck.deal(players,1)
-    deck.deal([river],1)
+    def flip(self):
+        self.faceup = not self.faceup
 
+    def __str__(self):
+        if self.faceup:
+            rep = super(Pos_Card, self).__str__()
+        else:
+            rep = """
+        +----------+
+        |##########|
+        |##########|
+        |##########|
+        |##########|
+        |##########|
+        |##########|  
+        +----------+
+                """
+        return rep
 
-print(river)
-print(player1)
-input("Player1 Bet")
-print(player2)
-input("Player2 Bet")
+#card = Pos_Card("A","♠")
+#print(card)
+#card.flip()
+#print(card)
 
-for i in range(3):
-    deck.deal([river],1)
-    print(river)
-    print("Player1")
-    print(player1)
-    input("Player1 Bet")
-    print("Player2")
-    print(player2)
-    input("Player2 Bet")
+# deck = Deck()
+# deck.populate()
+# deck.shuffle()
+#
+# player1 = Hand()
+# player2 = Hand()
+# river = Hand()
+# players = [player1,player2]
+# for i in range(2):
+#     deck.deal(players,1)
+#     deck.deal([river],1)
+#
+#
+# print(river)
+# print(player1)
+# input("Player1 Bet")
+# print(player2)
+# input("Player2 Bet")
+#
+# for i in range(3):
+#     deck.deal([river],1)
+#     print(river)
+#     print("Player1")
+#     print(player1)
+#     input("Player1 Bet")
+#     print("Player2")
+#     print(player2)
+#     input("Player2 Bet")
+
+if __name__ == "__main__":
+    print("You ran this module directly (and did not 'import' it).")
+    input("\n\nPress the ENTER key to exit.")
 
