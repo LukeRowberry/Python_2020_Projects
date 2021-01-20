@@ -29,19 +29,13 @@ def getnum(question,low,high):
 
 def get_name():
     """get the name and the date taken."""
-    try:
-        time = datetime.now()
-        test_time = time.strftime("%m/%d %H:%M")
-        while True:
-            name = input("Please enter your name: ")
-            if (len(name) >= 3) and (" " in name):
-                name = name.title()
-                return name, test_time
-            else:
-                print("Not a valid option...")
-    except:
-        print("Something went wrong while getting name")
-        sys.exit()
+    while True:
+        name = input("Please enter your name: ")
+        if (len(name) >= 3) and (" " in name):
+            name = name.title()
+            return name
+        else:
+            print("Not a valid option...")
 
 def open_file(file_name,mode):
     """open and returns an open file with the given permissions."""
