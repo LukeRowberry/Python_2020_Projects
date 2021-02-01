@@ -26,16 +26,16 @@ class App(Frame):
         self.bttn["command"] = self.submit
 
         self.text_user = Entry(self)
-        self.text_user.grid(row=1, column=1,columnspan=2)
+        self.text_user.grid(row=1, column=1,columnspan=2,sticky = W)
 
         self.text_pass = Entry(self)
-        self.text_pass.grid(row=2, column=1, columnspan=2)
+        self.text_pass.grid(row=2, column=1, columnspan=2,sticky = W)
 
         self.output = Text(self)
         self.output.grid(row = 4,columnspan = 3)
 
         self.new = Button(self,text = "New User")
-        self.new.grid(row = 3,column =1)
+        self.new.grid(row = 3,column =1,sticky = W)
         self.new["command"] = self.new_user
 
     def submit(self):
@@ -57,10 +57,11 @@ class App(Frame):
         self.output.insert(0.0,message)
 
     def new_user(self):
-        self.lbl_user = Label(self,text = "New Username")
-        self.lbl_pass = Label(self,text = "New Password")
-        #doesnt work
-
+        message = "Please enter the desired username and password above"
+        self.output.delete(0.0, END)
+        self.output.insert(0.0, message)
+        self.lbl_user.config(text = "New Username:")
+        self.lbl_pass.config(text="New Password:")
 
 
 
@@ -71,7 +72,7 @@ class App(Frame):
 def main():
     root = Tk()
     root.title("Password Entry")
-    root.geometry("750x600")
+    root.geometry("650x500")
     app = App(root)
     root.mainloop()
 main()
