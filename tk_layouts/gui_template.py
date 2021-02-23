@@ -1,5 +1,6 @@
 #The basic layout of ever tkinter gui and can be used anywhere
 from tkinter import *
+TITLE = "Name"
 HEIGHT = 250
 WIDTH = 250
 
@@ -13,7 +14,7 @@ class App(Frame):
 
 
 root = Tk()
-root.title("Name")
+root.title(TITLE)
 root.geometry(str(WIDTH)+"x"+str(+HEIGHT))
 app = App(root)
 
