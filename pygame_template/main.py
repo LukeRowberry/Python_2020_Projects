@@ -1,11 +1,19 @@
 import pygame
 import random
 import math
+import os
+
+#setup folder assets
+game_folder = os.path.dirname(__file__)
+img_folder = os.path.join(game_folder,"images")
+snd_folder = os.path.join(game_folder,"sounds")
 
 HEIGHT = 360
 WIDTH = 480
 FPS = 30
 title = "Template"
+#For drap mouse movement
+mouse_button_held = False
 
 #Colors (R,G,B)
 BLACK = (0, 0, 0)
@@ -100,33 +108,72 @@ class Npc(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.image = pygame.Surface((50, 50))
-        self.image.fill(PINK)
+        #self.image = pygame.Surface((50, 50))
+        #self.image.fill(PINK)
+        self.image = player_img
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH / 2, HEIGHT / 2)
         self.speedx = 0
         self.speedy = 0
 
-    def  update(self):
+    def update(self):
+        #Mouse movement
+        if mouse_button_held:
+            self.rect.center = (mousex,mousey)
+
+        #Basic movement
+        # self.speedx = 0
+        # self.speedy = 0
+        # keystate = pygame.key.get_pressed()
+        # if keystate[pygame.K_LEFT] or keystate[pygame.K_a]:
+        #     self.speedx = -5
+        # if keystate[pygame.K_RIGHT] or keystate[pygame.K_d]:
+        #     self.speedx = 5
+        # if keystate[pygame.K_UP] or keystate[pygame.K_w]:
+        #     self.speedy = -5
+        # if keystate[pygame.K_DOWN] or keystate[pygame.K_s]:
+        #     self.speedy = 5
         self.rect.x += self.speedx
         self.rect.y += self.speedy
 
-        #Right
-        if self.rect.left > WIDTH:
-            self.rect.right = 0
-        #Left
-        if self.rect.right < 0:
-            self.rect.left = WIDTH
-        #Up
-        if self.rect.top <0:
-            self.rect.top = HEIGHT
-        #Down
-        if self.rect.top > HEIGHT:
+        #Grid movement
+        # keystate = pygame.key.get_pressed()
+        # if (keystate[pygame.K_LEFT] or keystate[pygame.K_a]):
+        #     self.rect.centerx += -50
+        # if keystate[pygame.K_RIGHT] or keystate[pygame.K_d]:
+        #     self.rect.centerx += 50
+        # if keystate[pygame.K_UP] or keystate[pygame.K_w]:
+        #     self.rect.centery += -50
+        # if keystate[pygame.K_DOWN] or keystate[pygame.K_s]:
+        #     self.rect.centery += 50
+
+        #Borderwall
+        if self.rect.left <= 0:
+            self.rect.left = 0
+
+        if self.rect.right >= WIDTH:
+            self.rect.right = WIDTH
+
+        if self.rect.top <= 0:
             self.rect.top = 0
+
+        if self.rect.bottom >= HEIGHT:
+            self.rect.bottom = HEIGHT
+
+def spawn_new_player(x,y):
+    new_player = Player()
+    new_player.rect.center = (x,y)
+    new_player.speedx = random.randint(-10, 10)
+    new_player.speedy = random.randint(-10, 10)
+    all_sprites.add(new_player)
+    players_group.add(new_player)
 
 #Initialize pygame and create window
 pygame.init()
 pygame.mixer.init()
+
+#load game images
+player_img = pygame.image.load(os.path.join(img_folder,"duck.png")).convert()
 
 
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
@@ -152,36 +199,60 @@ running = True
 while running:
     #keep loop running at the right speed
     clock.tick(FPS)
+
+    mousex, mousey = pygame.mouse.get_pos()
+
     #process input
     for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN and player.rect.collidepoint(pygame.mouse.get_pos()):
+            mouse_button_held = True
+        if event.type == pygame.MOUSEBUTTONUP and mouse_button_held == True:
+            mouse_button_held = False
+            spawn_new_player(mousex, mousey)
         # if event.type == pygame.KEYDOWN:
-        #     if event.key == pygame.K_LEFT:
+        #     if event.key == pygame.K_LEFT  or event.key == pygame.K_a or event.key == pygame.K_KP4:
         #         player.rect.x += -50
-        #     if event.key == pygame.K_RIGHT:
+        #     if event.key == pygame.K_RIGHT or event.key == pygame.K_d or event.key == pygame.K_KP6:
         #         player.rect.x += 50
-        #     if event.key == pygame.K_UP:
+        #     if event.key == pygame.K_UP or event.key == pygame.K_w or event.key == pygame.K_KP8:
         #         player.rect.y += -50
-        #     if event.key == pygame.K_DOWN:
+        #     if event.key == pygame.K_DOWN or event.key == pygame.K_s or event.key == pygame.K_KP2:
         #         player.rect.y += 50
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                player.speedx = -8
-            if event.key == pygame.K_RIGHT:
-                player.speedx = 8
-            if event.key == pygame.K_UP:
-                player.speedy = -8
-            if event.key == pygame.K_DOWN:
-                player.speedy = 8
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                player.speedx = 0
-            if event.key == pygame.K_RIGHT:
-                player.speedx = 0
-            if event.key == pygame.K_UP:
-                player.speedy = 0
-            if event.key == pygame.K_DOWN:
-                player.speedy = 0
+        #     if event.key == event.key == pygame.K_KP7:
+        #         player.rect.x += -50
+        #         player.rect.y += -50
+        #     if event.key == event.key == pygame.K_KP9:
+        #         player.rect.x += 50
+        #         player.rect.y += -50
+        #     if event.key == event.key == pygame.K_KP1:
+        #         player.rect.x += -50
+        #         player.rect.y += 50
+        #     if event.key == event.key == pygame.K_KP3:
+        #         player.rect.x += 50
+        #         player.rect.y += 50
 
+        # if event.type == pygame.KEYDOWN:
+        #     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+        #         player.speedx = -8
+        #     if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+        #         player.speedx = 8
+        #     if event.key == pygame.K_UP or event.key == pygame.K_w:
+        #         player.speedy = -8
+        #     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+        #         player.speedy = 8
+        # if event.type == pygame.KEYUP:
+        #     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+        #         player.speedx = 0
+        #     if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+        #         player.speedx = 0
+        #     if event.key == pygame.K_UP or event.key == pygame.K_w:
+        #         player.speedy = 0
+        #     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+        #         player.speedy = 0
+        #
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
 
         #check for closing window
         if event.type == pygame.QUIT:
