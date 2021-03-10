@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="08bde5ce-6a0a-4a92-b9fb-83cbdc10a7e9" name="Default Changelist" comment="" />
+    <list default="true" id="08bde5ce-6a0a-4a92-b9fb-83cbdc10a7e9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/pygame_template/test.py" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

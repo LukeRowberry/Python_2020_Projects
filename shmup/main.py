@@ -15,6 +15,11 @@ class Player(pg.sprite.Sprite):
         self.rect.centery = (HEIGHT - (HEIGHT*.05))
         self.speedx = 0
 
+    def shoot(self):
+        b = Bullet(self.rect.centerx,self.rect.top + 1)
+        all_sprites.add(b)
+        bullet_group.add(b)
+
     def update(self):
         self.rect.x += self.speedx
         self.speedx = 0
@@ -23,18 +28,32 @@ class Player(pg.sprite.Sprite):
             self.speedx = -5
         if keystate[pg.K_RIGHT] or keystate[pg.K_d]:
             self.speedx = 5
-
+        #Ship stays on screen
         if self.rect.left <= 0:
             self.rect.left = 0
 
         if self.rect.right >= WIDTH:
             self.rect.right = WIDTH
+        #Ship shoots bullet
+        #if keystate[pg.K_SPACE]:
+        #    self.shoot()
 
-        if self.rect.top <= 0:
-            self.rect.top = 0
 
-        if self.rect.bottom >= HEIGHT:
-            self.rect.bottom = HEIGHT
+class Bullet(pg.sprite.Sprite):
+    def __init__(self,x,y):
+        super(Bullet, self).__init__()
+        self.image = pg.Surface((5, 10))
+        self.image.fill(YELLOW)
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speed = -10
+
+    def update(self):
+        self.rect.y += self.speed
+        if self.rect.bottom < 0:
+            self.kill()
+
 
 class Npc(pg.sprite.Sprite):
     def __init__(self):
@@ -42,14 +61,23 @@ class Npc(pg.sprite.Sprite):
         self.image = pg.Surface((25,25))
         self.image.fill(RED)
         self.rect = self.image.get_rect()
-        self.rect.centerx = (WIDTH/2)
-        self.rect.top = (0)
-        self.speedy = 5
+        self.rect.x = r.randrange(WIDTH - self.rect.width)
+        self.rect.y = r.randrange(-100, -40)
+        self.speedy = r.randrange(1, 8)
+        self.speedx = r.randrange(-3, 3)
+
+    def spawn(self):
+        npc = Npc()
+        npc_group.add(npc)
+        all_sprites.add(npc)
 
     def update(self):
+        self.rect.x += self.speedx
         self.rect.y += self.speedy
-        if self.rect.bottom >= HEIGHT:
-            self.rect.bottom = 0
+        if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 20:
+            self.rect.x = r.randrange(WIDTH - self.rect.width)
+            self.rect.y = r.randrange(-100, -40)
+            self.speedy = r.randrange(1, 8)
 ########################################################################
 
 
@@ -102,6 +130,7 @@ clock = pg.time.Clock()
 all_sprites = pg.sprite.Group()
 players_group = pg.sprite.Group()
 npc_group = pg.sprite.Group()
+bullet_group = pg.sprite.Group()
 ########################################################################
 
 
@@ -109,7 +138,10 @@ npc_group = pg.sprite.Group()
 #Creat Game Objects
 ########################################################################
 player = Player()
-npc = Npc()
+
+for i in range(10):
+    npc = Npc()
+    npc_group.add(npc)
 ########################################################################
 
 
@@ -117,7 +149,7 @@ npc = Npc()
 #Add Objects to Sprite Groups
 ########################################################################
 players_group.add(player)
-npc_group.add(npc)
+
 for i in players_group:
     all_sprites.add(i)
 for i in npc_group:
@@ -146,6 +178,8 @@ while playing:
         if event.type == pg.QUIT:
             playing = False
         if event.type == pg.KEYDOWN:
+            if event.key == pg.K_SPACE:
+                player.shoot()
             if event.key == pg.K_ESCAPE:
                 playing = False
     ###########################################
@@ -153,6 +187,15 @@ while playing:
     #Updates
     ###########################################
     all_sprites.update()
+    #Npc hits player
+    hits = pg.sprite.spritecollide(player,npc_group,True)
+    if hits:
+        #playing = False ----this is here----
+        npc.spawn()
+    #Bullet hits Npc
+    hits = pg.sprite.groupcollide(npc_group,bullet_group, True, True)
+    for hit in hits:
+        npc.spawn()
     ###########################################
 
     #Render/Draw
