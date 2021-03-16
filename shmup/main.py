@@ -23,7 +23,7 @@ class Player(pg.sprite.Sprite):
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.radius = int(self.rect.width * .85 / 2)
-        pg.draw.circle(self.image, RED, self.rect.center, self.radius)
+        #pg.draw.circle(self.image, RED, self.rect.center, self.radius)
         self.rect.centerx = (WIDTH/2)
         self.rect.centery = (HEIGHT - (HEIGHT*.05))
         self.speedx = 0
@@ -76,16 +76,32 @@ class Npc(pg.sprite.Sprite):
         super(Npc, self).__init__()
         # self.image = pg.Surface((25,25))
         # self.image.fill(RED)
-        self.image = npc_image
-        self.image = pg.transform.scale(npc_image, (40, 40))
-        self.image.set_colorkey(BLACK)
+        self.image_original = r.choice(meteor_images)
+        self.image_original.set_colorkey(BLACK)
+        self.image = self.image_original.copy()
         self.rect = self.image.get_rect()
         self.radius = int(self.rect.width*.75/2)
-        pg.draw.circle(self.image, RED, self.rect.center,self.radius)
+        #pg.draw.circle(self.image, RED, self.rect.center,self.radius)
         self.rect.x = r.randrange(WIDTH - self.rect.width)
         self.rect.y = r.randrange(-100, -40)
         self.speedy = r.randrange(1, 8)
         self.speedx = r.randrange(-3, 3)
+        self.rot = 0
+        self.rot_speed = r.randint(-8,8)
+        self.last_update = pg.time.get_ticks()
+
+    def rotate(self):
+        now = pg.time.get_ticks()
+        if now - self.last_update > 60:
+            self.last_update = now
+            #Doing rotation
+            self.rot = (self.rot + self.rot_speed)%360
+            new_image = pg.transform.rotate(self.image_original, self.rot)
+            old_center = self.rect.center
+            self.image = new_image
+            self.image.set_colorkey(BLACK)
+            self.rect = self.image.get_rect()
+            self.rect.center = old_center
 
     def spawn(self):
         npc = Npc()
@@ -93,12 +109,25 @@ class Npc(pg.sprite.Sprite):
         all_sprites.add(npc)
 
     def update(self):
+        self.rotate()
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 20:
             self.rect.x = r.randrange(WIDTH - self.rect.width)
             self.rect.y = r.randrange(-100, -40)
             self.speedy = r.randrange(1, 8)
+########################################################################
+
+
+
+#Game Function
+########################################################################
+def draw_text(surf,text,size,x,y,color):
+    font = pg.font.Font(font_name, size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x,y)
+    surf.blit(text_surface,text_rect)
 ########################################################################
 
 
@@ -123,6 +152,7 @@ BROWN = (139, 69, 19)
 C_BLUE = (100, 149, 237)
 
 title = "Shmup"
+font_name = pg.font.match_font("arial")
 ########################################################################
 
 
@@ -162,6 +192,29 @@ background = pg.transform.scale(background,(WIDTH,HEIGHT))
 player_img = pg.image.load(path.join(player_img_folder,"playership1.png")).convert()
 #Asteroid
 npc_image = pg.image.load(path.join(enemy_img_folder,"meteor.png")).convert()
+meteor_images = []
+meteor_list = ['meteorBrown_big1.png',
+               'meteorBrown_big2.png',
+               'meteorBrown_big3.png',
+               'meteorBrown_big4.png',
+               'meteorBrown_med1.png',
+               'meteorBrown_med3.png',
+               'meteorBrown_small1.png',
+               'meteorBrown_small2.png',
+               'meteorBrown_tiny1.png',
+               'meteorBrown_tiny2.png',
+               'meteorGrey_big1.png',
+               'meteorGrey_big2.png',
+               'meteorGrey_big3.png',
+               'meteorGrey_big4.png',
+               'meteorGrey_med1.png',
+               'meteorGrey_med2.png',
+               'meteorGrey_small1.png',
+               'meteorGrey_small2.png',
+               'meteorGrey_tiny1.png',
+               'meteorGrey_tiny2.png']
+for image in meteor_list:
+    meteor_images.append(pg.image.load(path.join(enemy_img_folder,image)))
 #Laser
 laser_img = pg.image.load(path.join(player_img_folder,"laser.png")).convert()
 ########################################################################
@@ -207,6 +260,7 @@ for i in npc_group:
 #Game Update Variables
 ###########################################################
 playing = True
+score = 0
 ###########################################################
 ###########################################################
 while playing:
@@ -238,6 +292,7 @@ while playing:
     #Bullet hits Npc
     hits = pg.sprite.groupcollide(npc_group,bullet_group, True, True)
     for hit in hits:
+        score += 50 - hit.radius
         npc.spawn()
     ###########################################
 
@@ -246,6 +301,8 @@ while playing:
     screen.fill(BLACK)
     screen.blit(background,background_rect)
     all_sprites.draw(screen)
+    #Draw hud
+    draw_text(screen,"Score: "+str(score),18,WIDTH/2,10,WHITE)
     pg.display.flip()
     ###########################################
 ###########################################################
