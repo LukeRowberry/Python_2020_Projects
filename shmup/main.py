@@ -16,6 +16,7 @@ from os import *
 class Player(pg.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
+        self.shield = 100
         # self.image = pg.Surface((50,40))
         # self.image.fill(PURPLE)
         self.image = player_img
@@ -27,11 +28,17 @@ class Player(pg.sprite.Sprite):
         self.rect.centerx = (WIDTH/2)
         self.rect.centery = (HEIGHT - (HEIGHT*.05))
         self.speedx = 0
+        self.shoot_delay = 350
+        self.last_shot = pg.time.get_ticks()
 
     def shoot(self):
-        b = Bullet(self.rect.centerx,self.rect.top + 1)
-        all_sprites.add(b)
-        bullet_group.add(b)
+        now = pg.time.get_ticks()
+        if now - self.last_shot >= self.shoot_delay:
+            self.last_shot = now
+            b = Bullet(self.rect.centerx,self.rect.top + 1)
+            all_sprites.add(b)
+            bullet_group.add(b)
+            shoot_sound.play()
 
     def update(self):
         self.rect.x += self.speedx
@@ -41,6 +48,8 @@ class Player(pg.sprite.Sprite):
             self.speedx = -5
         if keystate[pg.K_RIGHT] or keystate[pg.K_d]:
             self.speedx = 5
+        if keystate[pg.K_SPACE]:
+            player.shoot()
         #Ship stays on screen
         if self.rect.left <= 0:
             self.rect.left = 0
@@ -128,6 +137,22 @@ def draw_text(surf,text,size,x,y,color):
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x,y)
     surf.blit(text_surface,text_rect)
+def draw_bar(surf,x,y,pct):
+    if pct < 0:
+        pct = 0
+    bar_length = 180
+    bar_height = 25
+    fill = (pct/100)*bar_length
+    outline_rect = pg.Rect(x,y,bar_length,bar_height)
+    fill_rect = pg.Rect(x,y,fill,bar_height)
+    pg.draw.rect(surf,GREEN,fill_rect)
+    pg.draw.rect(surf,WHITE,outline_rect,3)
+    if player.shield <= 67 and player.shield > 34:
+        pg.draw.rect(surf, YELLOW, fill_rect)
+        pg.draw.rect(surf, WHITE, outline_rect, 3)
+    if player.shield <= 34:
+        pg.draw.rect(surf, RED, fill_rect)
+        pg.draw.rect(surf, WHITE, outline_rect, 3)
 ########################################################################
 
 
@@ -221,6 +246,19 @@ laser_img = pg.image.load(path.join(player_img_folder,"laser.png")).convert()
 
 
 
+#Load Sounds
+########################################################################
+shoot_sound = pg.mixer.Sound(path.join(sounds_folder,"pew.wav"))
+explosion_sounds = []
+for sound in ['expl3.wav','expl6.wav']:
+    explosion_sounds.append(pg.mixer.Sound(path.join(sounds_folder, sound)))
+pg.mixer.music.load(path.join(sounds_folder,"tgfcoder-FrozenJam-SeamlessLoop.ogg"))
+pg.mixer.music.set_volume(0.4)
+pg.mixer.music.play(loops=-1)
+########################################################################
+
+
+
 #Sprite Groups
 ########################################################################
 all_sprites = pg.sprite.Group()
@@ -275,8 +313,6 @@ while playing:
         if event.type == pg.QUIT:
             playing = False
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_SPACE:
-                player.shoot()
             if event.key == pg.K_ESCAPE:
                 playing = False
     ###########################################
@@ -286,14 +322,18 @@ while playing:
     all_sprites.update()
     #Npc hits player
     hits = pg.sprite.spritecollide(player,npc_group,True,pg.sprite.collide_circle)
-    if hits:
-        #playing = False ----this is here----
+    for hit in hits:
         npc.spawn()
+        r.choice(explosion_sounds).play()
+        player.shield -= hit.radius*2
+        if player.shield <= 0:
+            playing = False
     #Bullet hits Npc
     hits = pg.sprite.groupcollide(npc_group,bullet_group, True, True)
     for hit in hits:
         score += 50 - hit.radius
         npc.spawn()
+        r.choice(explosion_sounds).play()
     ###########################################
 
     #Render/Draw
@@ -302,7 +342,8 @@ while playing:
     screen.blit(background,background_rect)
     all_sprites.draw(screen)
     #Draw hud
-    draw_text(screen,"Score: "+str(score),18,WIDTH/2,10,WHITE)
+    draw_text(screen,"Score: "+str(score),25,WIDTH/2,10,WHITE)
+    draw_bar(screen, 5, 10, player.shield)
     pg.display.flip()
     ###########################################
 ###########################################################
