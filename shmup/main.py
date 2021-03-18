@@ -319,6 +319,7 @@ while playing:
 
     #Updates
     ###########################################
+
     all_sprites.update()
     #Npc hits player
     hits = pg.sprite.spritecollide(player,npc_group,True,pg.sprite.collide_circle)
