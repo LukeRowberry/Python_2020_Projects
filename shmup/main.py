@@ -407,7 +407,7 @@ while playing:
             death_expl = Explosion(player.rect.center,"player")
             all_sprites.add(death_expl)
             player.hide()
-            if player.lives <= 0 and not death_expl.alive():
+            if player.lives <= 0:  #and not death_expl.alive(): --needs fix
                 playing = False
     #Bullet hits Npc
     hits = pg.sprite.groupcollide(npc_group,bullet_group, True, True)
