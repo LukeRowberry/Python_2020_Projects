@@ -30,6 +30,15 @@ class Player(pg.sprite.Sprite):
         self.speedx = 0
         self.shoot_delay = 350
         self.last_shot = pg.time.get_ticks()
+        self.lives = 3
+        self.hide_timer = pg.time.get_ticks()
+        self.hidden = False
+
+    def hide(self):
+        self.lives -= 1
+        self.hidden = True
+        self.hide_timer = pg.time.get_ticks()
+        self.rect.center = (WIDTH / 2, HEIGHT + 200)
 
     def shoot(self):
         now = pg.time.get_ticks()
@@ -41,6 +50,12 @@ class Player(pg.sprite.Sprite):
             shoot_sound.play()
 
     def update(self):
+        if self.hidden and pg.time.get_ticks() - self.hide_timer > 3000:
+            self.hidden = False
+            self.rect.centery = (HEIGHT - (HEIGHT*.05))
+            self.rect.centerx = (WIDTH / 2)
+            self.shield = 100
+
         self.rect.x += self.speedx
         self.speedx = 0
         keystate = pg.key.get_pressed()
@@ -48,7 +63,7 @@ class Player(pg.sprite.Sprite):
             self.speedx = -5
         if keystate[pg.K_RIGHT] or keystate[pg.K_d]:
             self.speedx = 5
-        if keystate[pg.K_SPACE]:
+        if keystate[pg.K_SPACE] and not self.hidden:
             player.shoot()
         #Ship stays on screen
         if self.rect.left <= 0:
@@ -125,6 +140,32 @@ class Npc(pg.sprite.Sprite):
             self.rect.x = r.randrange(WIDTH - self.rect.width)
             self.rect.y = r.randrange(-100, -40)
             self.speedy = r.randrange(1, 8)
+
+class Explosion(pg.sprite.Sprite):
+    def __init__(self,center,size):
+        super(Explosion, self).__init__()
+        self.size = size
+        self.image = explosion_anim[self.size][0]
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+        self.frame = 0
+        self.frame_rate = 50
+        self.last_update = pg.time.get_ticks()
+
+
+    def update(self):
+        now = pg.time.get_ticks()
+        if now-self.last_update > self.frame_rate:
+            self.last_update = now
+            self.frame += 1
+            if self.frame == len(explosion_anim[self.size]):
+                self.kill()
+            else:
+                center = self.rect.center
+                self.image = explosion_anim[self.size][self.frame]
+                self.rect = self.image.get_rect()
+                self.rect.center = center
+
 ########################################################################
 
 
@@ -153,6 +194,13 @@ def draw_bar(surf,x,y,pct):
     if player.shield <= 34:
         pg.draw.rect(surf, RED, fill_rect)
         pg.draw.rect(surf, WHITE, outline_rect, 3)
+def draw_lives(surf,x,y,lives,img):
+    for i in range(lives):
+        img_rect = img.get_rect()
+        img_rect.x = x+40 * i
+        img_rect.y = y
+        surf.blit(img,img_rect)
+
 ########################################################################
 
 
@@ -191,6 +239,9 @@ scores_folder = path.join(game_folder,"scores")
 player_img_folder = path.join(images_folder,"player_images")
 enemy_img_folder = path.join(images_folder,"enemy_images")
 background_img_folder = path.join(images_folder,"background_images")
+animation_folder = path.join(images_folder,"animations")
+player_animation_folder = path.join(animation_folder,"player_animation")
+npc_animation_folder = path.join(animation_folder,"npc_animation")
 ########################################################################
 
 
@@ -215,6 +266,9 @@ background_rect = background.get_rect()
 background = pg.transform.scale(background,(WIDTH,HEIGHT))
 #Player
 player_img = pg.image.load(path.join(player_img_folder,"playership1.png")).convert()
+player_mini_img = pg.transform.scale(player_img,(33,26))
+player_mini_img.set_colorkey(BLACK)
+
 #Asteroid
 npc_image = pg.image.load(path.join(enemy_img_folder,"meteor.png")).convert()
 meteor_images = []
@@ -242,6 +296,26 @@ for image in meteor_list:
     meteor_images.append(pg.image.load(path.join(enemy_img_folder,image)))
 #Laser
 laser_img = pg.image.load(path.join(player_img_folder,"laser.png")).convert()
+#Animations
+explosion_anim = {}
+explosion_anim["lg"] = []
+explosion_anim["sm"] = []
+explosion_anim["player"] = []
+for i in range(0,9):
+    fn = "regularExplosion0{}.png".format(i)
+    img = pg.image.load(path.join(npc_animation_folder,fn)).convert()
+    img.set_colorkey(BLACK)
+    img_lg = pg.transform.scale(img, (100, 100))
+    img_sm = pg.transform.scale(img, (40, 40))
+    explosion_anim["lg"].append(img_lg)
+    explosion_anim["sm"].append(img_sm)
+    #Adding Player Animations
+    fn = "sonicExplosion0{}.png".format(i)
+    img = pg.image.load(path.join(player_animation_folder, fn)).convert()
+    img.set_colorkey(BLACK)
+    explosion_anim["player"].append(img)
+
+
 ########################################################################
 
 
@@ -327,12 +401,20 @@ while playing:
         npc.spawn()
         r.choice(explosion_sounds).play()
         player.shield -= hit.radius*2
+        expl = Explosion(hit.rect.center, "sm")
+        all_sprites.add(expl)
         if player.shield <= 0:
-            playing = False
+            death_expl = Explosion(player.rect.center,"player")
+            all_sprites.add(death_expl)
+            player.hide()
+            if player.lives <= 0 and not death_expl.alive():
+                playing = False
     #Bullet hits Npc
     hits = pg.sprite.groupcollide(npc_group,bullet_group, True, True)
     for hit in hits:
         score += 50 - hit.radius
+        expl = Explosion(hit.rect.center,"lg")
+        all_sprites.add(expl)
         npc.spawn()
         r.choice(explosion_sounds).play()
     ###########################################
@@ -345,6 +427,7 @@ while playing:
     #Draw hud
     draw_text(screen,"Score: "+str(score),25,WIDTH/2,10,WHITE)
     draw_bar(screen, 5, 10, player.shield)
+    draw_lives(screen, 30, 50, player.lives, player_mini_img)
     pg.display.flip()
     ###########################################
 ###########################################################
