@@ -386,7 +386,6 @@ pows_images = {}
 for i in range(len(powerups_list)):
     fn = "pow_img_{}.png".format(i)
     pows_images[powerups_list[i]] = pg.image.load(path.join(pow_folder,fn)).convert()
-
 ########################################################################
 
 
@@ -400,17 +399,6 @@ for sound in ['expl3.wav','expl6.wav']:
 pg.mixer.music.load(path.join(sounds_folder,"tgfcoder-FrozenJam-SeamlessLoop.ogg"))
 pg.mixer.music.set_volume(0.4)
 pg.mixer.music.play(loops=-1)
-########################################################################
-
-
-
-#Sprite Groups
-########################################################################
-all_sprites = pg.sprite.Group()
-players_group = pg.sprite.Group()
-npc_group = pg.sprite.Group()
-bullet_group = pg.sprite.Group()
-pows_group = pg.sprite.Group()
 ########################################################################
 
 
@@ -429,6 +417,15 @@ while playing:
     if game_over:
         show_go_screen()
         game_over = False
+        # Sprite Groups
+        ###########################################
+        all_sprites = pg.sprite.Group()
+        players_group = pg.sprite.Group()
+        npc_group = pg.sprite.Group()
+        bullet_group = pg.sprite.Group()
+        pows_group = pg.sprite.Group()
+        ###########################################
+
         #Create Game Objects
         ###########################################
         player = Player()
@@ -493,7 +490,7 @@ while playing:
             pow = Pow(hit.rect.center)
             all_sprites.add(pow)
             pows_group.add(pow)
-      #
+      #Powerup hits player
     hits = pg.sprite.spritecollide(player, pows_group, True, pg.sprite.collide_circle)
     for hit in hits:
         if hit.type == "shield":

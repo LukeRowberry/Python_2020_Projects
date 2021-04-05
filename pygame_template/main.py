@@ -7,6 +7,7 @@ import os
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder,"images")
 snd_folder = os.path.join(game_folder,"sounds")
+sprites_folder = os.path.join(img_folder,"sprites")
 
 HEIGHT = 360
 WIDTH = 480
@@ -173,7 +174,7 @@ pygame.init()
 pygame.mixer.init()
 
 #load game images
-player_img = pygame.image.load(os.path.join(img_folder,"duck.png")).convert()
+player_img = pygame.image.load(os.path.join(sprites_folder,"duck.png")).convert()
 
 
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
