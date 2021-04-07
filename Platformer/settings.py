@@ -14,16 +14,21 @@ PINK = (254, 127, 156)
 BROWN = (139, 69, 19)
 C_BLUE = (100, 149, 237)
 colors = [BLACK,WHITE,RED,BLUE,GREEN,YELLOW,PURPLE,ORANGE,PINK,BROWN,C_BLUE]
+BGCOLOR = C_BLUE
 
 HEIGHT = 600
 WIDTH = 480
 FPS = 60
-title = "Jumpy!"
+FONT_NAME = 'arial'
+TITLE = "Jumpy!"
+HS_FILE = "highscore.txt"
+SPRITESHEET = "spritesheet_jumper.png"
 
 #Player Properties
 PLAYER_ACC = 0.5
 PLAYER_FRICTION = -0.12
 PLAYER_GRAV = 0.8
+PLAYER_JUMP = 20
 
 #Starting Platforms
 PLATFORM_LIST = [(0, HEIGHT - 40, WIDTH, 40),
