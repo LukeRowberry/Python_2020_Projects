@@ -1,0 +1,31 @@
+import pygame as pg
+import random
+import os
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+YELLOW = (255, 255, 0)
+PURPLE = (75, 0, 130)
+ORANGE = (255, 69, 0)
+PINK = (254, 127, 156)
+BROWN = (139, 69, 19)
+C_BLUE = (100, 149, 237)
+DARKGREY = (40, 40, 40)
+LIGHTGREY = (100, 100, 100)
+
+#Game Settings
+HEIGHT = 768
+WIDTH = 1024
+FPS = 60
+TITLE = "Tile_Based Demo"
+BG_COLOR = DARKGREY
+
+TILESIZE = 32
+GRIDWIDTH = WIDTH / TILESIZE
+GRIDHEIGHT = HEIGHT / TILESIZE
+
+#Player Settings
+PLAYER_SPEED = 300

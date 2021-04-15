@@ -34,6 +34,10 @@ class Game(object):
         #Load Spritesheet
         img_dir = path.join(self.dir, "images")
         self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))
+        #Cloud Images
+        self.cloud_images = []
+        for i in range(1,3):
+            self.cloud_images.append(pg.image.load(path.join(img_dir, "cloud{}.png".format(i))).convert())
         #Load Sounds
         self.sound_dir = path.join(self.dir, "sounds")
         self.jump_sound = pg.mixer.Sound(path.join(self.sound_dir, "Jump33.wav"))
@@ -42,13 +46,19 @@ class Game(object):
     def new(self):
         #Create Sprite Groups
         self.score = 0
-        self.all_sprites = pg.sprite.Group()
+        self.all_sprites = pg.sprite.LayeredUpdates()
         self.platforms = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
+        self.mobs = pg.sprite.Group()
+        self.clouds = pg.sprite.Group()
         self.player = Player(self)
         for plat in PLATFORM_LIST:
             Platform(self, *plat)
+        self.mob_timer = 0
         pg.mixer.music.load(path.join(self.sound_dir, "Happy Tune.ogg"))
+        for i in range(8):
+            c = Cloud(self)
+            c.rect.y += 500
         self.run()
 
     def run(self):
@@ -80,6 +90,16 @@ class Game(object):
     def update(self):
         #Game Loop - Updates
         self.all_sprites.update()
+        #Spawn a mob
+        now = pg.time.get_ticks()
+        if now - self.mob_timer > 5000 + random.choice([-1000, -500, 0, 500, 1000]):
+            self.mob_timer = now
+            Mob(self)
+        #Player hits mob
+        mob_hits = pg.sprite.spritecollide(self.player, self.mobs, False, pg.sprite.collide_mask)
+        if mob_hits:
+            self.playing = False
+
         #Check if player hits a platform - falling only
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
@@ -103,11 +123,17 @@ class Game(object):
                 self.player.vel.y = -BOOST_POWER
                 self.player.jumping = False
 
-        #Death
+        #If player reaches 1/4 of screen
         if self.player.rect.top <= HEIGHT/4:
-            self.player.pos.y += max(abs(self.player.vel.y), 3)
+            if random.randrange(100) < 15:
+                Cloud(self)
+            self.player.pos.y += max(abs(self.player.vel.y), 2)
+            for cloud in self.clouds:
+                cloud.rect.y += max(abs(self.player.vel.y /2), 2)
+            for mob in self.mobs:
+                mob.rect.y += max(abs(self.player.vel.y), 2)
             for plat in self.platforms:
-                plat.rect.y += max(abs(self.player.vel.y), 3)
+                plat.rect.y += max(abs(self.player.vel.y), 2)
                 if plat.rect.top >= HEIGHT:
                     plat.kill()
                     self.score += 10
@@ -118,7 +144,7 @@ class Game(object):
              p = Platform(self, random.randrange(0, WIDTH - width),
                          random.randrange(-75, -30))
 
-        #If player reaches 1/4 of screen
+        #Death
         if self.player.rect.top > HEIGHT:
             for sprite in self.all_sprites:
                 sprite.rect.y -= max(self.player.vel.y, 10)
@@ -132,7 +158,6 @@ class Game(object):
         #Game Loop - Draw
         self.screen.fill(C_BLUE)
         self.all_sprites.draw(self.screen)
-        self.screen.blit(self.player.image, self.player.rect)
         self.draw_text(str(self.score), 22, WHITE, WIDTH/2, 15)
         pg.display.flip()
 
