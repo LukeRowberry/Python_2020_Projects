@@ -37,14 +37,26 @@ PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 BARREL_OFFSET = vec(30, 10)
 PLAYER_HEALTH = 100
 
-#Gun Settings
+#Weapon Settings
 BULLET_IMG = "bullet.png"
-BULLET_SPEED = 500
-BULLET_LIFE = 1000
-BULLET_RATE = 150
-KICKBACK = 200
-GUN_SPREAD = 5
-BULLET_DAMAGE = 10
+WEAPONS = {}
+WEAPONS["pistol"] = {"bullet_speed": 500,
+                     "bullet_lifetime": 1000,
+                     "rate": 250,
+                     "kickback": 200,
+                     "spread": 5,
+                     "damage": 10,
+                     "bullet_size": "lg",
+                     "bullet_count": 1}
+
+WEAPONS["shotgun"] = {"bullet_speed": 400,
+                      "bullet_lifetime": 500,
+                      "rate": 900,
+                      "kickback": 500,
+                      "spread": 20,
+                      "damage": 5,
+                      "bullet_size": "sm",
+                      "bullet_count": 12}
 
 #Mob Settings
 MOB_IMG = "zoimbie1_hold.png"
@@ -59,6 +71,7 @@ DETECT_RADIUS = 400
 #Effects
 MUZZLE_FLASHES = ["whitePuff15.png","whitePuff16.png",
                   "whitePuff17.png","whitePuff18.png"]
+SPLAT = "splat green.png"
 FLASH_DURATION = 40
 
 #Layers
@@ -70,7 +83,8 @@ EFFECTS_LAYER = 4
 ITEMS_LAYER = 1
 
 #Items
-ITEM_IMAGES = {"health": "health_pack.png"}
+ITEM_IMAGES = {"health": "health_pack.png",
+               "shotgun": "obj_shotgun.png"}
 HEALTH_PACK_AMOUNT = 20
 BOB_RANGE = 15
 BOB_SPEED = 0.4
@@ -81,6 +95,8 @@ PLAYER_HIT_SOUNDS = ['pain/8.wav', 'pain/9.wav', 'pain/10.wav', 'pain/11.wav']
 ZOMBIE_MOAN_SOUNDS = ['brains2.wav', 'brains3.wav', 'zombie-roar-1.wav', 'zombie-roar-2.wav',
                       'zombie-roar-3.wav', 'zombie-roar-5.wav', 'zombie-roar-6.wav', 'zombie-roar-7.wav']
 ZOMBIE_HIT_SOUNDS = ['splat-15.wav']
-WEAPON_SOUNDS_GUN = ['sfx_weapon_singleshot2.wav']
+WEAPON_SOUNDS = {"pistol": ["pistol.wav"],
+                 "shotgun": ["shotgun.wav"]}
 EFFECTS_SOUNDS = {'level_start': 'level_start.wav',
-                  'health_up': 'health_pack.wav'}
+                  'health_up': 'health_pack.wav',
+                  'gun_pickup': 'gun_pickup.wav'}
