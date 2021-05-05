@@ -1,0 +1,7 @@
+--Folder Opener--
+https://www.youtube.com/watch?v=Aim_7fC-inw
+
+https://www.geeksforgeeks.org/file-explorer-in-python-using-tkinter/
+
+--Ray Casting--
+https://www.youtube.com/watch?v=IWm5hi5Yrvk
