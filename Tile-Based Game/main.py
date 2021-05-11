@@ -152,7 +152,7 @@ class Game:
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
         self.paused = False
-        self.night = False
+        self.night = True
         self.effects_sounds["level_start"].play()
 
     def run(self):
