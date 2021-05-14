@@ -1,16 +1,18 @@
 import pygame as pg
 import math
+import random
+vec = pg.math.Vector2
 
 class Player(pg.sprite.Sprite):
-    def __init__(self,x,y):
+    def __init__(self):
         super(Player, self).__init__()
         self.image = pg.Surface((50,50))
         self.image.fill(BLUE)
         self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
+        self.rect.center = (WIDTH / 2, HEIGHT / 2)
 
-    def update(self, dt):
-        self.vx,self.vy = 200*dt,0
+    def update(self):
+        self.vx,self.vy = 0,0
         keystate = pg.key.get_pressed()
         # sum = 0
         # for i in keystate:
@@ -40,9 +42,41 @@ class Player(pg.sprite.Sprite):
         self.rect.x += self.vx
         self.rect.y += self.vy
 
+class Mob(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((50,50))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.pos = vec(random.randint(0, WIDTH), random.randint(0, HEIGHT))
+        self.vel = vec(MAX_SPEED, 0).rotate(random.uniform(0,360))
+        self.acc = vec(0, 0)
+        self.rect.center = self.pos
+
+    def follow_mouse(self):
+        mPos = pg.mouse.get_pos()
+        pPos = player.rect.center
+        self.acc = (pPos - self.pos).normalize()
+
+    def update(self):
+        self.follow_mouse()
+        self.vel += self.acc
+        if self.vel.length() > MAX_SPEED:
+            self.vel.scale_to_length((MAX_SPEED))
+        self.pos += self.vel
+        if self.pos.x > WIDTH:
+            self.pos.x = 0
+        if self.pos.x < 0:
+            self.pos.x = WIDTH
+        if self.pos.y > HEIGHT:
+            self.pos.y = 0
+        if self.pos.y < 0:
+            self.pos.y = HEIGHT
+
+        self.rect.center = self.pos
 
 
-
+MAX_SPEED = 5
 WIDTH = 1000
 HEIGHT = 800
 FPS = 60
@@ -60,8 +94,10 @@ pg.display.set_caption(TITLE)
 clock = pg.time.Clock()
 
 all_sprites = pg.sprite.Group()
-player = Player(WIDTH/2, HEIGHT/2)
+player = Player()
 all_sprites.add(player)
+mob = Mob()
+all_sprites.add(mob)
 
 running = True
 while running:
@@ -70,7 +106,7 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
-    all_sprites.update(dt)
+    all_sprites.update()
     screen.fill(BLACK)
     all_sprites.draw(screen)
     pg.display.flip()
