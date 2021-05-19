@@ -134,7 +134,6 @@ T = [['.....',
 
 shapes = [S, Z, I, O, J, L, T]
 shape_colors = [(0, 255, 0), (255, 0, 0), (0, 255, 255), (255, 255, 0), (255, 165, 0), (0, 0, 255), (128, 0, 128)]
-# index 0 - 6 represent shape
 
 
 class Piece(object):
@@ -162,13 +161,15 @@ def convert_shape_format(shape):
     format = shape.shape[shape.rotation % len(shape.shape)]
 
     for i, line in enumerate(format):
-        row = line(line)
+        row = list(line)
         for j, column in enumerate(row):
             if column == "0":
                 positions.append((shape.x + j, shape.y + i))
 
     for i, pos in enumerate(positions):
         positions[i] = (pos[0] -2, pos[1] - 4)
+
+    return positions
 
 
 def valid_space(shape, grid):
@@ -197,7 +198,10 @@ def get_shape():
 
 
 def draw_text_middle(text, size, color, surface):
-    pass
+    font = pg.font.SysFont("comicsans", size, bold = True)
+    label = font.render(text, 1, color)
+    surface.blit(label, (top_left_x + play_width / 2 - (label.get_width() / 2),
+                         top_left_y + play_height / 2 - label.get_width() / 2))
 
 
 def draw_grid(surface, grid):
@@ -211,20 +215,85 @@ def draw_grid(surface, grid):
 
 
 def clear_rows(grid, locked):
-    pass
+    inc = 0
+    for i in range(len(grid)-1, -1, -1):
+        row = grid[i]
+        if (0, 0, 0) not in row:
+            inc += 1
+            ind = i
+            for j in range(len(row)):
+                try:
+                    del locked[(j, i)]
+                except:
+                    continue
+    if inc > 0:
+        for key in sorted(list(locked), key = lambda x: x[1])[::-1]:
+            x, y = key
+            if y < ind:
+                new_key = (x, y + inc)
+                locked[new_key] = locked.pop(key)
+    return inc
 
 
 def draw_next_shape(shape, surface):
-    pass
+    font = pg.font.SysFont("comicsans", 30)
+    label = font.render("Next Shape", 1, (255, 255, 255))
 
-def draw_window(surface, grid):
+    sx = top_left_x + play_width + 50
+    sy = top_left_y + play_height / 2 - 100
+    format = shape.shape[shape.rotation % len(shape.shape)]
+
+    for i, line in enumerate(format):
+        row = list(line)
+        for j, column in enumerate(row):
+            if column == "0":
+                pg.draw.rect(surface, shape.color, (sx + j*block_size, sy + i*block_size, block_size, block_size), 0)
+
+    surface.blit(label, (sx+10, sy-30))
+
+def update_score(nscore):
+    score = max_score()
+
+    with open("scores.txt", "w") as f:
+        if int(score) > nscore:
+            f.write(str(score))
+        else:
+            f.write(str(nscore))
+
+
+def max_score():
+    with open("scores.txt", "r") as f:
+        lines = f.readlines()
+        score = lines[0].strip()
+
+    return score
+
+
+def draw_window(surface, grid, score = 0, last_score = 0):
     surface.fill((0, 0, 0))
 
     pg.font.init()
     font = pg.font.SysFont("comicsans", 60)
-    label = font.render("Tetris", 1, (255, 255, 255))
+    label = font.render("TETRIS", 1, (255, 255, 255))
 
     surface.blit(label, (top_left_x + play_width / 2 - label.get_width() / 2, 30))
+
+    #Current Score
+    font = pg.font.SysFont("comicsans", 30)
+    label = font.render("Score: " + str(score), 1, (255, 255, 255))
+
+    sx = top_left_x + play_width + 50
+    sy = top_left_y + play_height / 2 - 100
+
+    surface.blit(label, (sx+20, sy+160))
+
+    #Last Score
+    label = font.render("High Score: " + last_score, 1, (255, 255, 255))
+
+    sx = top_left_x - 200
+    sy = top_left_y + 200
+
+    surface.blit(label, (sx + 20, sy + 160))
 
     for i in range(len(grid)):
         for j in range (len(grid[i])):
@@ -233,10 +302,10 @@ def draw_window(surface, grid):
     pg.draw.rect(surface, (255, 0, 0), (top_left_x, top_left_y, play_width, play_height), 4)
 
     draw_grid(surface, grid)
-    pg.display.update()
 
 
 def main(win):
+    last_score = max_score()
     locked_positions = {}
     grid = create_grid(locked_positions)
 
@@ -247,11 +316,19 @@ def main(win):
     clock = pg.time.Clock()
     fall_time = 0
     fall_speed = 0.27
+    level_time = 0
+    score = 0
 
     while run:
         grid = create_grid(locked_positions)
         fall_time += clock.get_rawtime()
+        level_time += clock.get_rawtime()
         clock.tick()
+
+        if level_time/1000 > 5:
+            level_time = 0
+            if fall_speed > 0.12:
+                fall_speed -= 0.005
 
         if fall_time/1000 > fall_speed:
             fall_time = 0
@@ -263,35 +340,69 @@ def main(win):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 run = False
+                pg.display.quit()
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_LEFT:
                     current_piece.x -= 1
                     if not(valid_space(current_piece, grid)):
-                        current_piece += 1
+                        current_piece.x += 1
 
                 if event.key == pg.K_RIGHT:
                     current_piece.x += 1
                     if not(valid_space(current_piece, grid)):
-                        current_piece -= 1
+                        current_piece.x -= 1
 
                 if event.key == pg.K_DOWN:
-                    current_piece.x += 1
+                    current_piece.y += 1
                     if not(valid_space(current_piece, grid)):
                         current_piece.y -= 1
 
                 if event.key == pg.K_UP:
                     current_piece.rotation += 1
                     if not(valid_space(current_piece, grid)):
-                        current_piece -= 1
+                        current_piece.rotation -= 1
 
         shape_pos = convert_shape_format(current_piece)
+        for i in range(len(shape_pos)):
+            x, y = shape_pos[i]
+            if y > -1:
+                grid[y][x] = current_piece.color
 
-        draw_window(win, grid)
+        if change_piece:
+            for pos in shape_pos:
+                p = (pos[0], pos[1])
+                locked_positions[p] = current_piece.color
+            current_piece = next_piece
+            next_piece = get_shape()
+            change_piece = False
+            score += clear_rows(grid, locked_positions) * 10
+
+
+        draw_window(win, grid, score, last_score)
+        draw_next_shape(next_piece, win)
+        pg.display.update()
+
+        if check_lost(locked_positions):
+            draw_text_middle("YOU LOST!", 80, (255, 255, 255), win)
+            pg.display.update()
+            pg.time.delay(1500)
+            run = False
+            update_score(score)
 
 
 def main_menu(win):
-    main()
+    run = True
+    while run:
+        win.fill((0, 0, 0))
+        draw_text_middle("Press Any Key To Play", 60, (255, 255, 255), win)
+        pg.display.update()
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                run = False
+            if event.type == pg.KEYDOWN:
+                main(win)
+    pg.display.quit()
 
 win = pg.display.set_mode((screen_width, screen_height))
 pg.display.set_caption("Tetris")
